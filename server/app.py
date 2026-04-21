@@ -1,10 +1,15 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_migrate import Migrate
-from flask_jwt_extended import JWTManager, create_access_token
+from flask_jwt_extended import (
+    JWTManager,
+    create_access_token,
+    jwt_required,
+    get_jwt_identity,
+)
 
 from config import Config
-from models import db, bcrypt, User
+from models import db, bcrypt, User, Workout
 
 
 app = Flask(__name__)
@@ -62,6 +67,39 @@ def login():
         }, 200
 
     return {"error": "Invalid credentials"}, 401
+
+
+@app.get("/api/workouts")
+@jwt_required()
+def get_workouts():
+    current_user_id = int(get_jwt_identity())
+
+    workouts = Workout.query.filter_by(user_id=current_user_id).all()
+
+    return [workout.to_dict() for workout in workouts], 200
+
+
+@app.post("/api/workouts")
+@jwt_required()
+def create_workout():
+    current_user_id = int(get_jwt_identity())
+    data = request.get_json()
+
+    try:
+        new_workout = Workout(
+            title=data["title"],
+            date=data.get("date"),
+            notes=data.get("notes"),
+            user_id=current_user_id
+        )
+
+        db.session.add(new_workout)
+        db.session.commit()
+
+        return new_workout.to_dict(), 201
+
+    except Exception as e:
+        return {"error": str(e)}, 400
 
 
 if __name__ == "__main__":
