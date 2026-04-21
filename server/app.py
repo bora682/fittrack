@@ -9,7 +9,7 @@ from flask_jwt_extended import (
 )
 
 from config import Config
-from models import db, bcrypt, User, Workout
+from models import db, bcrypt, User, Workout, ExerciseEntry
 
 
 app = Flask(__name__)
@@ -140,6 +140,54 @@ def delete_workout(id):
     db.session.commit()
 
     return {"message": "Workout deleted"}, 200
+
+
+@app.post("/api/workouts/<int:id>/exercises")
+@jwt_required()
+def add_exercise(id):
+    current_user_id = int(get_jwt_identity())
+    data = request.get_json()
+
+    workout = Workout.query.get(id)
+
+    if not workout or workout.user_id != current_user_id:
+        return {"error": "Workout not found"}, 404
+
+    try:
+        new_entry = ExerciseEntry(
+            exercise_name=data["exercise_name"],
+            sets=data.get("sets"),
+            reps=data.get("reps"),
+            weight=data.get("weight"),
+            workout_id=id
+        )
+
+        db.session.add(new_entry)
+        db.session.commit()
+
+        return new_entry.to_dict(), 201
+
+    except Exception as e:
+        return {"error": str(e)}, 400
+
+
+@app.delete("/api/exercises/<int:id>")
+@jwt_required()
+def delete_exercise(id):
+    current_user_id = int(get_jwt_identity())
+
+    entry = ExerciseEntry.query.get(id)
+
+    if not entry:
+        return {"error": "Exercise not found"}, 404
+
+    if entry.workout.user_id != current_user_id:
+        return {"error": "Unauthorized"}, 403
+
+    db.session.delete(entry)
+    db.session.commit()
+
+    return {"message": "Exercise deleted"}, 200
 
 
 if __name__ == "__main__":
