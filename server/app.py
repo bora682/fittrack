@@ -102,5 +102,45 @@ def create_workout():
         return {"error": str(e)}, 400
 
 
+@app.patch("/api/workouts/<int:id>")
+@jwt_required()
+def update_workout(id):
+    current_user_id = int(get_jwt_identity())
+    data = request.get_json()
+
+    workout = Workout.query.get(id)
+
+    if not workout or workout.user_id != current_user_id:
+        return {"error": "Workout not found"}, 404
+
+    try:
+        workout.title = data.get("title", workout.title)
+        workout.date = data.get("date", workout.date)
+        workout.notes = data.get("notes", workout.notes)
+
+        db.session.commit()
+
+        return workout.to_dict(), 200
+
+    except Exception as e:
+        return {"error": str(e)}, 400
+
+
+@app.delete("/api/workouts/<int:id>")
+@jwt_required()
+def delete_workout(id):
+    current_user_id = int(get_jwt_identity())
+
+    workout = Workout.query.get(id)
+
+    if not workout or workout.user_id != current_user_id:
+        return {"error": "Workout not found"}, 404
+
+    db.session.delete(workout)
+    db.session.commit()
+
+    return {"message": "Workout deleted"}, 200
+
+
 if __name__ == "__main__":
     app.run(port=5555, debug=True)
