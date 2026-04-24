@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Signup() {
+  const navigate = useNavigate();
+
   const [formData, setFormData] = useState({
     username: "",
     email: "",
@@ -18,7 +21,6 @@ function Signup() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-
     setError("");
 
     try {
@@ -37,12 +39,9 @@ function Signup() {
         return;
       }
 
-      // ✅ store token
       localStorage.setItem("token", data.token);
-
-      console.log("Signup success:", data);
-
       alert("Signup successful!");
+      navigate("/dashboard");
     } catch (err) {
       setError("Something went wrong");
     }
