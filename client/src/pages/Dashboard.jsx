@@ -64,8 +64,30 @@ function Dashboard() {
       }
 
       setWorkouts([...workouts, data]);
-
       setTitle("");
+    } catch (err) {
+      setError("Something went wrong");
+    }
+  }
+
+  async function handleDeleteWorkout(id) {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(`http://127.0.0.1:5555/api/workouts/${id}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to delete workout");
+        return;
+      }
+
+      setWorkouts(workouts.filter((workout) => workout.id !== id));
     } catch (err) {
       setError("Something went wrong");
     }
@@ -94,6 +116,10 @@ function Dashboard() {
           <h3>{workout.title}</h3>
           <p>Date: {workout.date}</p>
           <p>Notes: {workout.notes}</p>
+
+          <button onClick={() => handleDeleteWorkout(workout.id)}>
+            Delete
+          </button>
         </div>
       ))}
     </div>
