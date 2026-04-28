@@ -7,6 +7,11 @@ function Dashboard() {
 
   const [exerciseForms, setExerciseForms] = useState({});
 
+  function handleLogout() {
+    localStorage.removeItem("token");
+    window.location.href = "/login";
+  }
+
   useEffect(() => {
     async function fetchWorkouts() {
       const token = localStorage.getItem("token");
@@ -144,7 +149,6 @@ function Dashboard() {
             exercise_entries: [...workout.exercise_entries, data],
           };
         }
-
         return workout;
       });
 
@@ -168,12 +172,15 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://127.0.0.1:5555/api/exercises/${exerciseId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await fetch(
+        `http://127.0.0.1:5555/api/exercises/${exerciseId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
 
       if (!res.ok) {
         const data = await res.json();
@@ -190,7 +197,6 @@ function Dashboard() {
             ),
           };
         }
-
         return workout;
       });
 
@@ -203,6 +209,8 @@ function Dashboard() {
   return (
     <div>
       <h2>Dashboard</h2>
+
+      <button onClick={handleLogout}>Logout</button>
 
       <form onSubmit={handleAddWorkout}>
         <input
