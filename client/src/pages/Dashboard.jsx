@@ -164,6 +164,42 @@ function Dashboard() {
     }
   }
 
+  async function handleDeleteExercise(workoutId, exerciseId) {
+    const token = localStorage.getItem("token");
+
+    try {
+      const res = await fetch(`http://127.0.0.1:5555/api/exercises/${exerciseId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const data = await res.json();
+        setError(data.error || "Failed to delete exercise");
+        return;
+      }
+
+      const updatedWorkouts = workouts.map((workout) => {
+        if (workout.id === workoutId) {
+          return {
+            ...workout,
+            exercise_entries: workout.exercise_entries.filter(
+              (exercise) => exercise.id !== exerciseId
+            ),
+          };
+        }
+
+        return workout;
+      });
+
+      setWorkouts(updatedWorkouts);
+    } catch (err) {
+      setError("Something went wrong");
+    }
+  }
+
   return (
     <div>
       <h2>Dashboard</h2>
@@ -213,6 +249,14 @@ function Dashboard() {
                   {exercise.reps} reps
                   {exercise.weight && ` @ ${exercise.weight} lbs`}
                 </p>
+
+                <button
+                  onClick={() =>
+                    handleDeleteExercise(workout.id, exercise.id)
+                  }
+                >
+                  Delete Exercise
+                </button>
               </div>
             ))}
 
