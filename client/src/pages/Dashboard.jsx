@@ -4,6 +4,7 @@ function Dashboard() {
   const [workouts, setWorkouts] = useState([]);
   const [error, setError] = useState("");
   const [title, setTitle] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const [exerciseForms, setExerciseForms] = useState({});
 
@@ -18,6 +19,7 @@ function Dashboard() {
 
       if (!token) {
         setError("Please log in to view your workouts.");
+        setLoading(false);
         return;
       }
 
@@ -32,12 +34,15 @@ function Dashboard() {
 
         if (!res.ok) {
           setError(data.error || data.msg || "Failed to load workouts");
+          setLoading(false);
           return;
         }
 
         setWorkouts(data);
       } catch (err) {
         setError("Something went wrong while loading workouts.");
+      } finally {
+        setLoading(false);
       }
     }
 
@@ -212,100 +217,106 @@ function Dashboard() {
 
       <button onClick={handleLogout}>Logout</button>
 
-      <form onSubmit={handleAddWorkout}>
-        <input
-          type="text"
-          placeholder="Workout title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <button type="submit">Add Workout</button>
-      </form>
+      {loading && <p>Loading workouts...</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
+      {!loading && (
+        <>
+          <form onSubmit={handleAddWorkout}>
+            <input
+              type="text"
+              placeholder="Workout title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+            />
+            <button type="submit">Add Workout</button>
+          </form>
 
-      {!error && workouts.length === 0 && <p>No workouts yet.</p>}
+          {error && <p style={{ color: "red" }}>{error}</p>}
 
-      {workouts.map((workout) => {
-        const currentExerciseForm = exerciseForms[workout.id] || {
-          exercise_name: "",
-          sets: "",
-          reps: "",
-          weight: "",
-        };
+          {!error && workouts.length === 0 && <p>No workouts yet.</p>}
 
-        return (
-          <div key={workout.id}>
-            <h3>{workout.title}</h3>
-            <p>Date: {workout.date}</p>
-            <p>Notes: {workout.notes}</p>
+          {workouts.map((workout) => {
+            const currentExerciseForm = exerciseForms[workout.id] || {
+              exercise_name: "",
+              sets: "",
+              reps: "",
+              weight: "",
+            };
 
-            <button onClick={() => handleDeleteWorkout(workout.id)}>
-              Delete Workout
-            </button>
+            return (
+              <div key={workout.id}>
+                <h3>{workout.title}</h3>
+                <p>Date: {workout.date}</p>
+                <p>Notes: {workout.notes}</p>
 
-            <h4>Exercises</h4>
-
-            {workout.exercise_entries.length === 0 && (
-              <p>No exercises yet.</p>
-            )}
-
-            {workout.exercise_entries.map((exercise) => (
-              <div key={exercise.id}>
-                <p>
-                  {exercise.exercise_name} — {exercise.sets} sets ×{" "}
-                  {exercise.reps} reps
-                  {exercise.weight && ` @ ${exercise.weight} lbs`}
-                </p>
-
-                <button
-                  onClick={() =>
-                    handleDeleteExercise(workout.id, exercise.id)
-                  }
-                >
-                  Delete Exercise
+                <button onClick={() => handleDeleteWorkout(workout.id)}>
+                  Delete Workout
                 </button>
+
+                <h4>Exercises</h4>
+
+                {workout.exercise_entries.length === 0 && (
+                  <p>No exercises yet.</p>
+                )}
+
+                {workout.exercise_entries.map((exercise) => (
+                  <div key={exercise.id}>
+                    <p>
+                      {exercise.exercise_name} — {exercise.sets} sets ×{" "}
+                      {exercise.reps} reps
+                      {exercise.weight && ` @ ${exercise.weight} lbs`}
+                    </p>
+
+                    <button
+                      onClick={() =>
+                        handleDeleteExercise(workout.id, exercise.id)
+                      }
+                    >
+                      Delete Exercise
+                    </button>
+                  </div>
+                ))}
+
+                <form onSubmit={(e) => handleAddExercise(workout.id, e)}>
+                  <input
+                    type="text"
+                    name="exercise_name"
+                    placeholder="Exercise name"
+                    value={currentExerciseForm.exercise_name}
+                    onChange={(e) => handleExerciseChange(workout.id, e)}
+                  />
+
+                  <input
+                    type="number"
+                    name="sets"
+                    placeholder="Sets"
+                    value={currentExerciseForm.sets}
+                    onChange={(e) => handleExerciseChange(workout.id, e)}
+                  />
+
+                  <input
+                    type="number"
+                    name="reps"
+                    placeholder="Reps"
+                    value={currentExerciseForm.reps}
+                    onChange={(e) => handleExerciseChange(workout.id, e)}
+                  />
+
+                  <input
+                    type="text"
+                    name="weight"
+                    placeholder="Weight"
+                    value={currentExerciseForm.weight}
+                    onChange={(e) => handleExerciseChange(workout.id, e)}
+                  />
+
+                  <button type="submit">Add Exercise</button>
+                </form>
               </div>
-            ))}
-
-            <form onSubmit={(e) => handleAddExercise(workout.id, e)}>
-              <input
-                type="text"
-                name="exercise_name"
-                placeholder="Exercise name"
-                value={currentExerciseForm.exercise_name}
-                onChange={(e) => handleExerciseChange(workout.id, e)}
-              />
-
-              <input
-                type="number"
-                name="sets"
-                placeholder="Sets"
-                value={currentExerciseForm.sets}
-                onChange={(e) => handleExerciseChange(workout.id, e)}
-              />
-
-              <input
-                type="number"
-                name="reps"
-                placeholder="Reps"
-                value={currentExerciseForm.reps}
-                onChange={(e) => handleExerciseChange(workout.id, e)}
-              />
-
-              <input
-                type="text"
-                name="weight"
-                placeholder="Weight"
-                value={currentExerciseForm.weight}
-                onChange={(e) => handleExerciseChange(workout.id, e)}
-              />
-
-              <button type="submit">Add Exercise</button>
-            </form>
-          </div>
-        );
-      })}
+            );
+          })}
+        </>
+      )}
     </div>
   );
 }
