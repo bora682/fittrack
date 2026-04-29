@@ -233,7 +233,9 @@ function Dashboard() {
 
           {error && <p style={{ color: "red" }}>{error}</p>}
 
-          {!error && workouts.length === 0 && <p>No workouts yet.</p>}
+          {!error && workouts.length === 0 && (
+            <p>No workouts yet. Add your first workout above 💪</p>
+          )}
 
           {workouts.map((workout) => {
             const currentExerciseForm = exerciseForms[workout.id] || {
