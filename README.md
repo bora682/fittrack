@@ -63,13 +63,13 @@ FitTrack is a full-stack workout tracking application that allows users to creat
 
 ## Setup Instructions
 
-### 1. CLone repo
+### 1. Clone repo
 ```bash
 git clone https://github.com/bora682/fittrack.git
 cd fittrack
 ```
 
-### 2. Baackend setup
+### 2. Backend setup
 ```bash
 cd server
 pipenv install
@@ -88,7 +88,7 @@ npm run dev
 ## Deployment
 Frontend deployed with Netlify. Backend runs locally (Flask API).
 
-Live App: Coming Soon
+Live App: https://fittrack-dashboard.netlify.app
 
 ## Future Improvements
 - Edit workouts
