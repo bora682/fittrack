@@ -31,7 +31,7 @@ FitTrack is a full-stack workout tracking application that allows users to creat
 - Flask-CORS
 
 ### Database
-- SQLite (development)
+- SQLite (development and deployed)
 
 ---
 
@@ -63,6 +63,8 @@ FitTrack is a full-stack workout tracking application that allows users to creat
 
 ## Setup Instructions
 
+Note: In production, the backend is deployed on Render and frontend on Netlify.
+
 ### 1. Clone repo
 ```bash
 git clone https://github.com/bora682/fittrack.git
@@ -86,9 +88,11 @@ npm run dev
 ```
 
 ## Deployment
-Frontend deployed with Netlify. Backend runs locally (Flask API).
+Frontend deployed with Netlify. Backend deployed with Render.
 
 Live App: https://fittrack-dashboard.netlify.app
+
+Backend API: https://fittrack-backend-lx5h.onrender.com
 
 ## Future Improvements
 - Edit workouts
