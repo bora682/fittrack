@@ -23,7 +23,7 @@ function Login() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:5555/api/login", {
+      const res = await fetch("https://fittrack-backend-lx5h.onrender.com/api/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -24,7 +24,7 @@ function Signup() {
     setError("");
 
     try {
-      const res = await fetch("http://127.0.0.1:5555/api/signup", {
+      const res = await fetch("https://fittrack-backend-lx5h.onrender.com/api/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

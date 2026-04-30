@@ -24,7 +24,7 @@ function Dashboard() {
       }
 
       try {
-        const res = await fetch("http://127.0.0.1:5555/api/workouts", {
+        const res = await fetch("https://fittrack-backend-lx5h.onrender.com/api/workouts", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -55,7 +55,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch("http://127.0.0.1:5555/api/workouts", {
+      const res = await fetch("https://fittrack-backend-lx5h.onrender.com/api/workouts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -86,7 +86,7 @@ function Dashboard() {
     const token = localStorage.getItem("token");
 
     try {
-      const res = await fetch(`http://127.0.0.1:5555/api/workouts/${id}`, {
+      const res = await fetch(`https://fittrack-backend-lx5h.onrender.com/api/workouts/${id}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -129,7 +129,7 @@ function Dashboard() {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:5555/api/workouts/${workoutId}/exercises`,
+        `https://fittrack-backend-lx5h.onrender.com/api/workouts/${workoutId}/exercises`,
         {
           method: "POST",
           headers: {
@@ -178,7 +178,7 @@ function Dashboard() {
 
     try {
       const res = await fetch(
-        `http://127.0.0.1:5555/api/exercises/${exerciseId}`,
+        `https://fittrack-backend-lx5h.onrender.com/api/exercises/${exerciseId}`,
         {
           method: "DELETE",
           headers: {

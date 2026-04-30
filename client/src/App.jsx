@@ -3,7 +3,7 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 
-// ✅ NEW: Protected Route
+
 function ProtectedRoute({ children }) {
   const token = localStorage.getItem("token");
 
